@@ -79,7 +79,7 @@ def upscale_slice(model_path, image, slicer):
 
 
 def upscale_image(input_image_path, output_image_path):
-    start_time = time.time()
+    start_time = time.perf_counter()
     global MODEL_PATH
     global current_upscale
     args.model_path = MODEL_PATH
@@ -105,7 +105,7 @@ def upscale_image(input_image_path, output_image_path):
         else:
             print('Error: Missing arguments, check -h, --help for details')
         current_upscale = args.input
-        print(f"{round((time.time() - start_time) / 6 ) / 10} mins")
+        print(f"{round((time.perf_counter() - start_time) / 6 ) / 10} mins")
 
 
 def upscale_folder(input_folder_path, output_folder_path):
@@ -114,35 +114,50 @@ def upscale_folder(input_folder_path, output_folder_path):
         if not os.path.exists(output_folder_path):
             os.makedirs(output_folder_path)
     if os.path.exists(input_folder_path) and os.path.exists(output_folder_path):
-        start_time = time.time()
+        start_time = time.perf_counter()
         print(f">>UPSACLING {input_folder_path}\n")
         for image in get_image_files(input_folder_path):
             upscale_image(image, os.path.join(output_folder_path, f"{os.path.splitext(os.path.basename(image))[0]}.png"))
-        print(f"\n{input_folder_path} IS UPSCALED; Time taken: {round((time.time() - start_time) / 6 )/10} mins\n\n\n")
+        print(f"\n{input_folder_path} IS UPSCALED; Time taken: {round((time.perf_counter() - start_time) / 6 )/10} mins\n\n\n")
     else:
         print(f"Input/Output folder doesnt exists.")
 
 
+def invalid_input(inp):
+    print(f"Invalid {inp}")
+    exit()
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--type', type=int, help='DUH')
-    parser.add_argument('-m', '--model_path', type=str, help='REQUIRED: specify path of the model being used')
-    parser.add_argument('-i', '--input', type=str, help='REQUIRED: specify path of the image you want to upscale')
-    parser.add_argument('-o', '--output', type=str, help='REQUIRED: specify path where you want to save image')
-    parser.add_argument('-v', '--visualize', action='store_true',
-                        help='OPTIONAL: add this to see how image looks before and after upscale')
-    parser.add_argument('-s', '--slice', nargs='?', type=int, const=4,
-                        help='OPTIONAL: specify whether to split frames, recommended to use to help with V_RAM '
-                             'unless you have sufficient resources')
+
+    parser.add_argument('-t', '--type_of_upscale', type=str, required=True, help='REQUIRED: specify weather up scaling image ot a folder')
+    parser.add_argument('-m', '--model_path', type=str, required=True, help='REQUIRED: specify path of the model being used')
+    parser.add_argument('-i', '--input', type=str, required=True, help='REQUIRED: specify path of the input')
+    parser.add_argument('-o', '--output', type=str, help='REQUIRED: specify path of the output (optional)')
+
     args = parser.parse_args()
-    print(args.type)
-    exit()
-    args.visualize = False
-    args.slice = False
+    MODEL_PATH = args.model_path
+    invalid_input("argument for type_of_upscale") if args.type_of_upscale != 1 and args.type_of_upscale != 2 else None
+    invalid_input("model_path") if not os.path.exists(args.model_path) else None
+    invalid_input("input_path") if not os.path.exists(args.input_path) else None
+
 ########################################################################################################################
+
+
+
+
+
+
     # ENTER THE MODEL PATH HERE (RealESRGAN_x4plus_anime_6B.pth)
-    MODEL_PATH = ''
-    args.model_path = MODEL_PATH
+
 
     upscale_folder("",  # Upsacale Folder
                    "")  # Output Folder / Let it empty
+
+    # tupe 0/1 i o m
+
+
+
+
+
