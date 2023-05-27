@@ -137,6 +137,14 @@ if __name__ == '__main__':
     args.visualize = False
     args.slice = False
 ########################################################################################################################
+    """inp = 0
+    while inp != 1 and inp != 2:
+        try:
+            inp = int(input("Folder Upscale [1] or Single Image Upscale [2]: "))
+            print("Enter 1 or 2")
+        except Exception as e:
+            print("Enter 1 or 2")
+"""
     # ENTER THE MODEL PATH HERE (RealESRGAN_x4plus_anime_6B.pth)
     MODEL_PATH = ''
     args.model_path = MODEL_PATH
