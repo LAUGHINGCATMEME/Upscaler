@@ -125,6 +125,7 @@ def upscale_folder(input_folder_path, output_folder_path):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('-t', '--type', type=int, help='DUH')
     parser.add_argument('-m', '--model_path', type=str, help='REQUIRED: specify path of the model being used')
     parser.add_argument('-i', '--input', type=str, help='REQUIRED: specify path of the image you want to upscale')
     parser.add_argument('-o', '--output', type=str, help='REQUIRED: specify path where you want to save image')
@@ -134,17 +135,11 @@ if __name__ == '__main__':
                         help='OPTIONAL: specify whether to split frames, recommended to use to help with V_RAM '
                              'unless you have sufficient resources')
     args = parser.parse_args()
+    print(args.type)
+    exit()
     args.visualize = False
     args.slice = False
 ########################################################################################################################
-    """inp = 0
-    while inp != 1 and inp != 2:
-        try:
-            inp = int(input("Folder Upscale [1] or Single Image Upscale [2]: "))
-            print("Enter 1 or 2")
-        except Exception as e:
-            print("Enter 1 or 2")
-"""
     # ENTER THE MODEL PATH HERE (RealESRGAN_x4plus_anime_6B.pth)
     MODEL_PATH = ''
     args.model_path = MODEL_PATH
