@@ -1,12 +1,8 @@
 import time
 import cv2
 import argparse
-import image_slicer
-from image_slicer import join
 from PIL import Image
-import numpy as np
 import os
-
 from basicsr.archs.rrdbnet_arch import RRDBNet
 from realesrgan import RealESRGANer
 
@@ -14,6 +10,15 @@ current_upscale = ""
 
 
 def convert_to_png(image_path):
+    """
+    Converts an image to PNG format if it is not already in PNG format.
+
+    Args:
+        image_path (str): Path to the image file.
+
+    Returns:
+        str: Path to the converted PNG image file.
+    """
     start_name = image_path[:]
     if not image_path.endswith("png"):
         image = Image.open(image_path)
@@ -31,6 +36,15 @@ def convert_to_png(image_path):
 
 
 def list_folders(pth):
+    """
+        Returns a list of folder names within the specified path.
+
+        Args:
+            pth (str): Path to the directory.
+
+        Returns:
+            list: List of folder names.
+    """
     folders = []
     for root, dir_names, _ in os.walk(pth):
         for dir_name in dir_names:
@@ -38,7 +52,16 @@ def list_folders(pth):
     return folders
 
 
-def get_image_files(folder_path):
+def files_in_folder(folder_path):
+    """
+        Retrieves a list of image files within the specified folder.
+
+        Args:
+            folder_path (str): Path to the folder.
+
+        Returns:
+            list: List of image file paths.
+    """
     image_extensions = ['.jpg', '.jpeg', '.png']  # Add more extensions if needed
     image_files = []
 
@@ -53,6 +76,16 @@ def get_image_files(folder_path):
 
 
 def upscale(model_path, im_path):
+    """
+       Upscales an image using the specified model.
+
+       Args:
+           model_path (str): Path to the model being used.
+           im_path (str): Path to the input image file.
+
+       Returns:
+           ndarray or None: Upscaled image as NumPy array or None if there was an error.
+    """
     model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=6, num_grow_ch=32, scale=4)
     up_sampler = RealESRGANer(scale=4, model_path=model_path, model=model, tile=0, tile_pad=10, pre_pad=0, half=False)
     img = cv2.imread(im_path, cv2.IMREAD_UNCHANGED)
@@ -64,19 +97,17 @@ def upscale(model_path, im_path):
         return None
 
 
-def upscale_slice(model_path, image, slicer):
-    width, height = Image.open(image).size
-    tiles = image_slicer.slice(image, slicer, save=False)
-    model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=6, num_grow_ch=32, scale=4)
-    up_sampler = RealESRGANer(scale=4, model_path=model_path, model=model, tile=0, tile_pad=10, pre_pad=0, half=False)
-    for tile in tiles:
-        output_image, _ = up_sampler.enhance(np.array(tile.image), outscale=4)
-        tile.image = Image.fromarray(output_image)
-        tile.coords = (tile.coords[0] * 4, tile.coords[1] * 4)
-    return join(tiles, width=width * 4, height=height * 4)
-
-
 def upscale_image(input_image_path, output_image_path):
+    """
+        Upscales an image and saves the output to the specified path.
+
+        Args:
+            input_image_path (str): Path to the input image file.
+            output_image_path (str): Path to save the upscaled image.
+
+        Returns:
+            None
+    """
     start_time = time.perf_counter()
     global MODEL_PATH
     global current_upscale
@@ -97,6 +128,16 @@ def upscale_image(input_image_path, output_image_path):
 
 
 def upscale_folder(input_folder_path, output_folder_path):
+    """
+        Upscales all images in a folder and saves the output to the specified folder.
+
+        Args:
+            input_folder_path (str): Path to the input folder.
+            output_folder_path (str): Path to save the upscaled images.
+
+        Returns:
+            None
+    """
     if output_folder_path == "":
         output_folder_path = os.path.join(input_folder_path, "UPSCALED")
         if not os.path.exists(output_folder_path):
@@ -104,7 +145,7 @@ def upscale_folder(input_folder_path, output_folder_path):
     if os.path.exists(input_folder_path) and os.path.exists(output_folder_path):
         start_time = time.perf_counter()
         print(f">>UP SCALING {input_folder_path}\n")
-        for image in get_image_files(input_folder_path):
+        for image in files_in_folder(input_folder_path):
             upscale_image(image, os.path.join(output_folder_path, f"{os.path.splitext(os.path.basename(image))[0]}.png"))
         print(f"\n{input_folder_path} IS UP SCALED; Time taken: {round((time.perf_counter() - start_time) / 6 )/10} min\n\n\n")
     else:
@@ -112,6 +153,15 @@ def upscale_folder(input_folder_path, output_folder_path):
 
 
 def invalid_input(inp):
+    """
+    Prints an error message for invalid input and exits the program.
+
+    Args:
+        inp (str): Invalid input.
+
+    Returns:
+        None
+    """
     print(f"Invalid {inp}")
     exit()
 
@@ -121,8 +171,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--type_of_upscale', type=str, required=True, help='REQUIRED: specify weather up scaling image ot a folder')
     parser.add_argument('-m', '--model_path', type=str, required=True, help='REQUIRED: specify path of the model being used')
-    parser.add_argument('-i', '--input', type=str, required=True, help='REQUIRED: specify path of the input')
-    parser.add_argument('-o', '--output', type=str, help='REQUIRED: specify path of the output (optional)')
+    parser.add_argument('-i', '--input', type=str, required=True, help='REQUIRED: specify path of the input file/image')
+    parser.add_argument('-o', '--output', type=str, help='REQUIRED: specify path of the output (optional) file/image')
+    parser.add_argument('-c', '--colour_upscale', type=str, help='REQUIRED: specify weather to colour upscale or not')
     args = parser.parse_args()
 
     # CHECKING IF THE INPUTS ARE CORRECT
@@ -131,15 +182,14 @@ if __name__ == '__main__':
     MODEL_PATH = args.model_path
     invalid_input("input_path") if not os.path.exists(args.input) else None
     if args.output is None:
-        # Original file path
+        # MAKING AN OUTPUT PATH
         directory, filename = os.path.split(args.input)
         name, extension = os.path.splitext(filename)
         new_filename = f'{name}_upscaled{extension}'
         args.output = os.path.join(directory, new_filename)
-    else:
-        invalid_input("output_path") if not os.path.exists(args.output) else None
-
 ########################################################################################################################
-    if args.type_of_upscale == "1":
-        upscale_image(args.input, args.output)
-    exit()
+
+    # INFORMING THE FUNCTIONS TO UPSCALE
+    upscale_image(args.input, args.output) if args.type_of_upscale == "1" else upscale_folder(args.input, args.output)
+
+
