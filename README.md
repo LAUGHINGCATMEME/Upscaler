@@ -1,5 +1,5 @@
 # Upscaler
-4x Image upscaler
+upssales image
 
 1. go to the file location
 
