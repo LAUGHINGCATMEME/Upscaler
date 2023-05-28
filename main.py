@@ -193,6 +193,7 @@ if __name__ == '__main__':
     """if args.colour_upscale:
         pass
     else:
-        upscale_image(args.input, args.output) if args.type_of_upscale == "1" else upscale_folder(args.input, args.output)"""
+        upscale_image(args.input, args.output) if args.type_of_upscale == "1" else upscale_folder(args.input, args.output)
+        """
 
 
