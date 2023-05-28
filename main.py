@@ -173,7 +173,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--model_path', type=str, required=True, help='REQUIRED: specify path of the model being used')
     parser.add_argument('-i', '--input', type=str, required=True, help='REQUIRED: specify path of the input file/image')
     parser.add_argument('-o', '--output', type=str, help='REQUIRED: specify path of the output (optional) file/image')
-    parser.add_argument('-c', '--colour_upscale', type=str, help='REQUIRED: specify weather to colour upscale or not')
+    parser.add_argument('-c', '--colour_upscale', type=bool, help='REQUIRED: specify weather to colour upscale or not')
     args = parser.parse_args()
 
     # CHECKING IF THE INPUTS ARE CORRECT
@@ -188,8 +188,10 @@ if __name__ == '__main__':
         new_filename = f'{name}_upscaled{extension}'
         args.output = os.path.join(directory, new_filename)
 ########################################################################################################################
-
     # INFORMING THE FUNCTIONS TO UPSCALE
-    upscale_image(args.input, args.output) if args.type_of_upscale == "1" else upscale_folder(args.input, args.output)
+    if args.colour_upscale:
+        pass
+    else:
+        upscale_image(args.input, args.output) if args.type_of_upscale == "1" else upscale_folder(args.input, args.output)
 
 
