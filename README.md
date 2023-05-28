@@ -1,13 +1,15 @@
 # Upscaler
 upssales image
 
-1. go to the file location
+1. Download the code and go to the file location
 
-2. open command prompt and then type this to upscale an image.
+2. open command prompt on that location
+
+3. a) To upscale an image type
 ```
 pythom main.py -t 1 -m "RealESRGAN_x4plus_anime_6B.pth" -i "ENTER IMAGE PATH HERE"
 ``` 
-3. If you want to upscale an entire folder then type
+3. b) If you want to upscale an entire folder then type
 ```
 pythom main.py -t 2 -m "RealESRGAN_x4plus_anime_6B.pth" -i "ENTER FOLDER PATH HERE"
 ```
