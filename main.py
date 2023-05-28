@@ -189,9 +189,10 @@ if __name__ == '__main__':
         args.output = os.path.join(directory, new_filename)
 ########################################################################################################################
     # INFORMING THE FUNCTIONS TO UPSCALE
-    if args.colour_upscale:
+    upscale_image(args.input, args.output) if args.type_of_upscale == "1" else upscale_folder(args.input, args.output)
+    """if args.colour_upscale:
         pass
     else:
-        upscale_image(args.input, args.output) if args.type_of_upscale == "1" else upscale_folder(args.input, args.output)
+        upscale_image(args.input, args.output) if args.type_of_upscale == "1" else upscale_folder(args.input, args.output)"""
 
 
