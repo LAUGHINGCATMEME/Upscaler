@@ -1,5 +1,5 @@
 # Upscaler
-upssales image
+upscales image
 
 1. Download the code and go to the file location
 
