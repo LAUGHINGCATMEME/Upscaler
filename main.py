@@ -231,6 +231,7 @@ if __name__ == '__main__':
         name, extension = os.path.splitext(filename)
         new_filename = f'{name}_upscaled{extension}'
         args.output = os.path.join(directory, new_filename)
+        os.mkdir(args.output)
 ########################################################################################################################
     # INFORMING THE FUNCTIONS TO UPSCALE
     upscale_image(args.input, args.output) if args.type_of_upscale == "1" else upscale_folder(args.input, args.output)
@@ -239,5 +240,5 @@ if __name__ == '__main__':
     else:
         upscale_image(args.input, args.output) if args.type_of_upscale == "1" else upscale_folder(args.input, args.output)
         """
-    
+
 
