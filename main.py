@@ -225,13 +225,10 @@ if __name__ == '__main__':
     invalid_input("model_path") if not os.path.exists(args.model_path) else None
     MODEL_PATH = args.model_path
     invalid_input("input_path") if not os.path.exists(args.input) else None
-    if args.output is None:
-        # MAKING AN OUTPUT PATH
-        directory, filename = os.path.split(args.input)
-        name, extension = os.path.splitext(filename)
-        new_filename = f'{name}_upscaled{extension}'
-        args.output = os.path.join(directory, new_filename)
-        os.mkdir(args.output)
+    # OUTPUT
+    args.output = os.path.join(args.input, "upscaled") if args.output is None else args.output
+    os.mkdir(args.output) if not os.path.exists(args.output) else None
+    print(f"Output folder: {args.output}")
 ########################################################################################################################
     # INFORMING THE FUNCTIONS TO UPSCALE
     upscale_image(args.input, args.output) if args.type_of_upscale == "1" else upscale_folder(args.input, args.output)
