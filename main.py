@@ -139,10 +139,6 @@ def upscale_folder(input_folder_path, output_folder_path):
         Returns:
             None
     """
-    if output_folder_path == "":
-        output_folder_path = os.path.join(input_folder_path, "UPSCALED")
-        if not os.path.exists(output_folder_path):
-            os.makedirs(output_folder_path)
     if os.path.exists(input_folder_path) and os.path.exists(output_folder_path):
         start_time = time.perf_counter()
         print(f">>UP SCALING {input_folder_path}\n")
@@ -217,25 +213,25 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--model_path', type=str, required=True, help='REQUIRED: specify path of the model being used')
     parser.add_argument('-i', '--input', type=str, required=True, help='REQUIRED: specify path of the input file/image')
     parser.add_argument('-o', '--output', type=str, help='REQUIRED: specify path of the output (optional) file/image')
-    parser.add_argument('-c', '--colour_upscale', type=bool, help='REQUIRED: specify weather to colour upscale or not')
+    parser.add_argument('-c', '--colour_upscale', type=bool, help='REQUIRED: specify weather to colour upscales or not')
     args = parser.parse_args()
 
     # CHECKING IF THE INPUTS ARE CORRECT
+    print("Cheaking Inputs")
     invalid_input("argument for type_of_upscale") if args.type_of_upscale != "1" and args.type_of_upscale != "2" else None
     invalid_input("model_path") if not os.path.exists(args.model_path) else None
     MODEL_PATH = args.model_path
     invalid_input("input_path") if not os.path.exists(args.input) else None
-    # OUTPUT
-    args.output = os.path.join(args.input, "upscaled") if args.output is None else args.output
-    os.mkdir(args.output) if not os.path.exists(args.output) else None
-    print(f"Output folder: {args.output}")
+    print("Making Output path")
+    if args.output is None:
+        if args.type_of_upscale == "1":
+            output_folder = os.path.join(os.path.dirname(args.input), f"upscaled")
+            os.mkdir(output_folder) if not os.path.exists(output_folder) else None
+            args.output = os.path.join(output_folder, os.path.basename(args.input))
+        else:
+            args.output = os.path.join(args.input, "upscaled")
+            os.mkdir(args.output) if not os.path.exists(args.output) else None
+    print(f"Output path: {args.output}")
 ########################################################################################################################
     # INFORMING THE FUNCTIONS TO UPSCALE
     upscale_image(args.input, args.output) if args.type_of_upscale == "1" else upscale_folder(args.input, args.output)
-    """if args.colour_upscale:
-        pass
-    else:
-        upscale_image(args.input, args.output) if args.type_of_upscale == "1" else upscale_folder(args.input, args.output)
-        """
-
-
